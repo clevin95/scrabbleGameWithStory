@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		432154D1194B6702009F7C6B /* corncob_caps.txt in Resources */ = {isa = PBXBuildFile; fileRef = 432154D0194B6702009F7C6B /* corncob_caps.txt */; };
+		43B549CD194E028E00E47ACF /* 80368-dictionary.txt in Resources */ = {isa = PBXBuildFile; fileRef = 43B549CC194E028E00E47ACF /* 80368-dictionary.txt */; };
 		43E05DA4194A2676006CC8F9 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43E05DA3194A2676006CC8F9 /* Foundation.framework */; };
 		43E05DA6194A2676006CC8F9 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43E05DA5194A2676006CC8F9 /* CoreGraphics.framework */; };
 		43E05DA8194A2676006CC8F9 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43E05DA7194A2676006CC8F9 /* UIKit.framework */; };
@@ -39,6 +40,7 @@
 
 /* Begin PBXFileReference section */
 		432154D0194B6702009F7C6B /* corncob_caps.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = corncob_caps.txt; sourceTree = "<group>"; };
+		43B549CC194E028E00E47ACF /* 80368-dictionary.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "80368-dictionary.txt"; sourceTree = "<group>"; };
 		43E05DA0194A2676006CC8F9 /* scrabbleGameWithStorryBoard.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = scrabbleGameWithStorryBoard.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		43E05DA3194A2676006CC8F9 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		43E05DA5194A2676006CC8F9 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -140,6 +142,7 @@
 			isa = PBXGroup;
 			children = (
 				432154D0194B6702009F7C6B /* corncob_caps.txt */,
+				43B549CC194E028E00E47ACF /* 80368-dictionary.txt */,
 				43E05DB2194A2676006CC8F9 /* AppDelegate.h */,
 				43E05DB3194A2676006CC8F9 /* AppDelegate.m */,
 				43E05DAB194A2676006CC8F9 /* scrabbleGameWithStorryBoard-Info.plist */,
@@ -248,6 +251,7 @@
 				43E05DBF194A2676006CC8F9 /* Images.xcassets in Resources */,
 				43E05DB7194A2676006CC8F9 /* Main_iPhone.storyboard in Resources */,
 				43E05DAE194A2676006CC8F9 /* InfoPlist.strings in Resources */,
+				43B549CD194E028E00E47ACF /* 80368-dictionary.txt in Resources */,
 				432154D1194B6702009F7C6B /* corncob_caps.txt in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

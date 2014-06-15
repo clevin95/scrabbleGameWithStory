@@ -121,6 +121,8 @@
 }
 
 - (IBAction)scoreWordPressed:(id)sender {
+    
+    [self.logic makeLargestFormArray:self.logic.lettersInPlay];
     [self checkWordScore];
 }
 
@@ -144,7 +146,67 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    NSLog(@"%@",[self.logic makeLargestFormLetters:@"ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ"]);
+    NSLog(@"%@",[self.logic makeLargestFormLetters:@"qwertyuiopasdfghjklzxcvbnm\
+                 qwertyuiopasdfghjklzxcvbnm\
+                 qwertyuiopasdfghjklzxcvbnm\
+                 qwertyuiopasdfghjklzxcvbnm\
+                 qwertyuiopasdfghjklzxcvbnm\
+                 qwertyuiopasdfghjklzxcvbnm\
+                 qwertyuiopasdfghjklzxcvbnm\
+                 qwertyuiopasdfghjklzxcvbnm\
+                 qwertyuiopasdfghjklzxcvbnm\
+                 qwertyuiopasdfghjklzxcvbnm\
+                 qwertyuiopasdfghjklzxcvbnm\
+                 qwertyuiopasdfghjklzxcvbnm\
+                 qwertyuiopasdfghjklzxcvbnm\
+                 qwertyuiopasdfghjklzxcvbnm\
+                 qwertyuiopasdfghjklzxcvbnm\
+                 qwertyuiopasdfghjklzxcvbnm\
+                 qwertyuiopasdfghjklzxcvbnm\
+                 qwertyuiopasdfghjklzxcvbnm\
+                 qwertyuiopasdfghjklzxcvbnm\
+                 qwertyuiopasdfghjklzxcvbnm\
+                 qwertyuiopasdfghjklzxcvbnm\
+                 qwertyuiopasdfghjklzxcvbnm\
+                 qwertyuiopasdfghjklzxcvbnm\
+                 qwertyuiopasdfghjklzxcvbnm\
+                 qwertyuiopasdfghjklzxcvbnm\
+                 qwertyuiopasdfghjklzxcvbnm\
+                 qwertyuiopasdfghjklzxcvbnm\
+                 qwertyuiopasdfghjklzxcvbnm\
+                 qwertyuiopasdfghjklzxcvbnm\
+                 qwertyuiopasdfghjklzxcvbnm\
+                 qwertyuiopasdfghjklzxcvbnm\
+                 qwertyuiopasdfghjklzxcvbnm\
+                 qwertyuiopasdfghjklzxcvbnm\
+                 qwertyuiopasdfghjklzxcvbnm\
+                 qwertyuiopasdfghjklzxcvbnm\
+                 qwertyuiopasdfghjklzxcvbnm\
+                 qwertyuiopasdfghjklzxcvbnm\
+                 qwertyuiopasdfghjklzxcvbnm\
+                 qwertyuiopasdfghjklzxcvbnm\
+                 qwertyuiopasdfghjklzxcvbnm\
+                 qwertyuiopasdfghjklzxcvbnm\
+                 qwertyuiopasdfghjklzxcvbnm\
+                 qwertyuiopasdfghjklzxcvbnm\
+                 qwertyuiopasdfghjklzxcvbnm\
+                 qwertyuiopasdfghjklzxcvbnm\
+                 qwertyuiopasdfghjklzxcvbnm\
+                 qwertyuiopasdfghjklzxcvbnm\
+                 qwertyuiopasdfghjklzxcvbnm\
+                 qwertyuiopasdfghjklzxcvbnm\
+                 qwertyuiopasdfghjklzxcvbnm\
+                 qwertyuiopasdfghjklzxcvbnm\
+                 qwertyuiopasdfghjklzxcvbnm\
+                 qwertyuiopasdfghjklzxcvbnm\
+                 qwertyuiopasdfghjklzxcvbnm\
+                 qwertyuiopasdfghjklzxcvbnm\
+                 qwertyuiopasdfghjklzxcvbnm\
+                 qwertyuiopasdfghjklzxcvbnm\
+                 qwertyuiopasdfghjklzxcvbnm\
+                 qwertyuiopasdfghjklzxcvbnm\
+                 qwertyuiopasdfghjklzxcvbnm\
+                 qwertyuiopasdfghjklzxcvbnm"]);
 }
 
 - (void)didReceiveMemoryWarning

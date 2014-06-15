@@ -90,13 +90,13 @@
 
     NSRange newRange = range;
     if ([newWord count] > 0){
-        NSRange newRange = [self startingSequenceIsInDictionary:newWord forRange:range usingDictionary:dictionary];
+        NSRange newRange = [self searchForStartingSequence:[self convertArrayToString:newWord] inDictionary:dictionary start:range.location finish:(range.location + range.length)];
         if (newRange.length == -1){
             return @""; // returns empty string if the no words begin with the letters in newWord
         }else{
             NSString *wordAsString = [self convertArrayToString:newWord];
             if ([self binarySearchForItem:wordAsString From:newRange.location To:(newRange.location + newRange.length) inArray:dictionary]){
-               // NSLog(@"%@",wordAsString);
+            //    NSLog(@"%@",wordAsString);
             }
         }
     }
@@ -114,8 +114,27 @@
     return runningLongest;
 }
 
+-(NSRange)startingSequenceIsInDictionary:(NSArray *)startingSequence
+                                forRange:(NSRange)range
+                         usingDictionary:(NSArray *)dictionary
+{
+    NSString *startingSequenceString = [self convertArrayToString:startingSequence];
+    return [self searchForStartingSequence:startingSequenceString inDictionary:dictionary start:range.location finish:(range.location + range.length)];
+}
 
+//returns an array of all the distinct items in the input array
+-(NSArray *)allDistinctFrom:(NSMutableArray *)arrayWithDuplicates
+{
+    NSMutableArray *distinctArray = [[NSMutableArray alloc]init];
+    for (NSString *item in arrayWithDuplicates){
+        if (![distinctArray containsObject:item]){
+            [distinctArray addObject:item];
+        }
+    }
+    return distinctArray;
+}
 
+//main function which the user would pass the letters to.
 -(NSString *)makeLargestFormLetters:(NSString *)letters{
     NSMutableArray *lettersArray = [self convertWordToLetterArray:letters];
     AppDelegate *appD = (AppDelegate *)[[UIApplication sharedApplication] delegate];
@@ -126,24 +145,12 @@
 }
 
 
--(NSRange)startingSequenceIsInDictionary:(NSArray *)startingSequence
-                                forRange:(NSRange)range
-                         usingDictionary:(NSArray *)dictionary
-{
-    NSString *startingSequenceString = [self convertArrayToString:startingSequence];
-    return [self searchForStartingSequence:startingSequenceString inDictionary:dictionary start:range.location finish:(range.location + range.length)];
-}
-
-
--(NSArray *)allDistinctFrom:(NSMutableArray *)array
-{
-    NSMutableArray *distinctArray = [[NSMutableArray alloc]init];
-    for (NSString *item in array){
-        if (![distinctArray containsObject:item]){
-            [distinctArray addObject:item];
-        }
-    }
-    return distinctArray;
+-(NSString *)makeLargestFormArray:(NSMutableArray *)lettersArray{
+    AppDelegate *appD = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+    NSRange fullRange = NSMakeRange(0, ([appD.allWords count] - 1));
+    NSString *runningLongest = @"";
+    [self allPermutationsFromLetters:lettersArray toNewWord:[@[] mutableCopy] runningLongest:runningLongest withDictionaryRange:fullRange englishDictionary:appD.allWords];
+    return runningLongest;
 }
 
 

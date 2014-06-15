@@ -3,7 +3,6 @@
 
 
 
-
 //function returns an array of words that can be created using the letters inputed to "letters to add"
 //newWord and newWordList both start out empty when you call the function
 func allPermutations(lettersToAdd:Character[], newWord:Character[], inout newWordList:String[]) -> String[]
@@ -25,7 +24,7 @@ func allPermutations(lettersToAdd:Character[], newWord:Character[], inout newWor
     return newWordList
 }
 
-The function works by removing each letter from the lettersToAdd array and adding it to the newWord array and running the function recursivily on each one of these newWords and reduced sets of lettersToAdd. This is demonstrated best by a simple depiction of the recursive tree. In this image the arrays on the left are the "lettersToAdd", and the arrays on the right are the new words. As you can see the new words contain all the possible combinations of abc.  
+The function works by removing each letter from the lettersToAdd array and adding it to the newWord array and running the function recursivily on each one of these newWords and reduced sets of lettersToAdd. This is demonstrated best by a simple depiction of the recursive tree. In this image the arrays on the left are the "lettersToAdd", and the arrays on the right are the "newWord" arrays. As you can see the new words contain all the possible combinations of abc and each subset.  
 
 
                                    [a,      b,      c] []
@@ -44,13 +43,11 @@ The function works by removing each letter from the lettersToAdd array and addin
     |                   |             |               |            |                |
 [] [a,b,c]          [] [a,c,b]   [] [b,a,c]     [] [b, c, a]  [] [c,a,b]       [] [c,b,a] 
 
-This algorithm is nice because it is straight forward and doesn't create any duplicates. However it is also incredibly slow for long sets of letters. The run time is N! + (N - 1)! + (N - 2)! + ... (N - N)!) * logbase2(lengthOfDictionary). You have to multiply by log2(lengthOfDictionary) because there is a dictionary look up for every new word.
+This algorithm is nice because it is straight forward and doesn't create any duplicates (if there is only one of each letter). However it is also incredibly slow for long sets of letters. The run time is N! + (N - 1)! + (N - 2)! + ... (N - N)!) * logbase2(lengthOfDictionary). You have to multiply by log2(lengthOfDictionary) because there is a dictionary look up for every new word.
 
 
 
-
-
-My first attemt to make this algorithm faster lead me down an incorrect road. Because i wanted to find the longest word that could be formed from a given set of letters I concluded that a solution that built from the bottom up would not be the most efficient. So insted of adding letters to newWord array I created an algorithm which was based on swapping them instead. This algorithm is effective in creating all permutations of a set of letters but does not find subset permutations. It also takes the same number of steps to create the full length permutations as my first algorthm so effectively it doesn't really build solutions from the top down as I had hoped. 
+My first attemt to make this algorithm faster lead me down an incorrect path. Because I wanted to find the longest word that could be formed from a given set of letters I concluded that a solution that built from the bottom up would not be the most efficient. So insted of adding letters to newWord array I created an algorithm which was based on swapping letters. This algorithm is effective in creating all permutations of a set of letters without duplicates but does not find subset permutations. It also takes the same number of steps to create the full length permutations as my first algorthm so effectively it doesn't really build solutions from the top down as I had hoped. 
 
 
 //Solution by swapping
@@ -92,19 +89,20 @@ My first attemt to make this algorithm faster lead me down an incorrect road. Be
 
 #####################################
 
-THE VERY LONG AND VERY FAST SOLUTION:
+THE VERY LONG BUT VERY FAST SOLUTION:
 
 #####################################
 
 
+After attemting to make my first algorith more efficient I realised that there was probably no significantly faster way to create all permutations for a given set of letters. However I also realised that I was not trying to create all permutations, I was trying to create all permutations that were dictionary words. This important distinctin lead me to the conclusion that instead of having the dictionary look up proccess and the permutation generation algorthm work independnt of each other I should have each prosses inform the other. I eventually deveoped the algorithm to use 
 
 
-
+This lead me to the key realisation that I needed to synchronise the prosses of creating all permutations with the dictionary look up process. 
 
 //Verry quick solution for generating all possible words for a given set of letters
 
 //used binary search to determine weather item is in array
-//returns yes if it is found in array and no otherwise
+//Verry quick solution for generating all possible words for a given set of letters
 -(BOOL)binarySearchForItem:(NSString *)item
                       From:(NSInteger)start
                         To:(NSInteger)finish
@@ -115,7 +113,9 @@ THE VERY LONG AND VERY FAST SOLUTION:
     NSString *middleItem = array[middle];
     NSComparisonResult compare = [item compare:middleItem];
     if (ABS(start - finish) < 2){
-        if ([item isEqualToString:array[start]] || [item isEqualToString:array[start]]){
+        if ([item isEqualToString:array[start]]){
+            return YES;
+        }else if ([item isEqualToString:array[finish]]){
             return YES;
         }
         else{
@@ -132,13 +132,12 @@ THE VERY LONG AND VERY FAST SOLUTION:
 }
 
 //This function uses binary search
-//returns a range where all the words beggining with the "item" can be found
-//(not all words in returned range nessasarilly start with "item")
+//returns a range where all the words beggining with the letters in item can be found
 //If no words begging with item are found it returns a range of (-1,-1)
 -(NSRange)searchForStartingSequence:(NSString *)item
-           inDictionary:(NSArray *)array
-                  start:(NSInteger)start
-                 finish:(NSInteger)finish;
+                       inDictionary:(NSArray *)array
+                              start:(NSInteger)start
+                             finish:(NSInteger)finish;
 {
     NSInteger middle = ((finish - start) / 2) + start;
     NSString *middleItem = array[middle];
@@ -174,57 +173,66 @@ THE VERY LONG AND VERY FAST SOLUTION:
 //needed to search to determine if the word is in the dictionary.
 
 -(NSString *)allPermutationsFromLetters:(NSMutableArray *)lettersToAdd
-                             toNewWord:(NSMutableArray *)newWord
-                        runningLongest:(NSString *)runningLongest
-                   withDictionaryRange:(NSRange)range
+                              toNewWord:(NSMutableArray *)newWord
+                         runningLongest:(NSString *)runningLongest
+                    withDictionaryRange:(NSRange)range
+                      englishDictionary:(NSArray *)dictionary
 {
+
     NSRange newRange = range;
     if ([newWord count] > 0){
-        NSRange newRange = [self startingSequenceIsInDictionary:newWord forRange:range];
+        NSRange newRange = [self searchForStartingSequence:[self convertArrayToString:newWord] inDictionary:dictionary start:range.location finish:(range.location + range.length)];
         if (newRange.length == -1){
             return @""; // returns empty string if the no words begin with the letters in newWord
         }else{
             NSString *wordAsString = [self convertArrayToString:newWord];
-            AppDelegate *appD = (AppDelegate *)[[UIApplication sharedApplication] delegate];
-            if ([self binarySearchForItem:wordAsString From:newRange.location To:(newRange.location + newRange.length) inArray:appD.allWords]){
-                NSLog(@"%@",wordAsString);
-                if ([wordAsString length] > [runningLongest length]){
-                    runningLongest = wordAsString;
-                }
+            if ([self binarySearchForItem:wordAsString From:newRange.location To:(newRange.location + newRange.length) inArray:dictionary]){
+               //NSLog(@"%@",wordAsString);
             }
         }
     }
-    for (NSInteger i = 0; i < [lettersToAdd count]; i++){
+    NSArray *distinctLetters = [self allDistinctFrom:lettersToAdd];
+    for (NSInteger i = 0; i < [distinctLetters count]; i++){
         NSMutableArray *lettersToAddCopy = [lettersToAdd mutableCopy];
         NSMutableArray *newWordCopy = [newWord mutableCopy];
-        NSString *letterToTransfer = lettersToAdd[i];
-        [lettersToAdd removeObjectAtIndex:i];
+        NSString *letterToTransfer = distinctLetters[i];
+        [lettersToAdd removeObjectAtIndex:[lettersToAdd indexOfObject:letterToTransfer]];
         [newWord addObject:letterToTransfer];
-        [self allPermutationsFromLetters:lettersToAdd toNewWord:newWord runningLongest:runningLongest withDictionaryRange:newRange];
+        [self allPermutationsFromLetters:lettersToAdd toNewWord:newWord runningLongest:runningLongest withDictionaryRange:newRange englishDictionary:dictionary];
         newWord = newWordCopy;
         lettersToAdd = lettersToAddCopy;
     }
     return runningLongest;
 }
 
+-(NSRange)startingSequenceIsInDictionary:(NSArray *)startingSequence
+                                forRange:(NSRange)range
+                         usingDictionary:(NSArray *)dictionary
+{
+    NSString *startingSequenceString = [self convertArrayToString:startingSequence];
+    return [self searchForStartingSequence:startingSequenceString inDictionary:dictionary start:range.location finish:(range.location + range.length)];
+}
 
+//returns an array of all the distinct items in the input array
+-(NSArray *)allDistinctFrom:(NSMutableArray *)arrayWithDuplicates
+{
+    NSMutableArray *distinctArray = [[NSMutableArray alloc]init];
+    for (NSString *item in arrayWithDuplicates){
+        if (![distinctArray containsObject:item]){
+            [distinctArray addObject:item];
+        }
+    }
+    return distinctArray;
+}
 
+//main function which the user would pass the letters to.
 -(NSString *)makeLargestFormLetters:(NSString *)letters{
     NSMutableArray *lettersArray = [self convertWordToLetterArray:letters];
     AppDelegate *appD = (AppDelegate *)[[UIApplication sharedApplication] delegate];
     NSRange fullRange = NSMakeRange(0, ([appD.allWords count] - 1));
     NSString *runningLongest = @"";
-    [self allPermutationsFromLetters:lettersArray toNewWord:[@[] mutableCopy] runningLongest:runningLongest withDictionaryRange:fullRange];
+    [self allPermutationsFromLetters:lettersArray toNewWord:[@[] mutableCopy] runningLongest:runningLongest withDictionaryRange:fullRange englishDictionary:appD.allWords];
     return runningLongest;
-}
-
-
--(NSRange)startingSequenceIsInDictionary:(NSArray *)startingSequence
-                                forRange:(NSRange)range
-{
-    AppDelegate *appD = (AppDelegate *)[[UIApplication sharedApplication] delegate];
-    NSString *item = [self convertArrayToString:startingSequence];
-    return [self searchForStartingSequence:item inDictionary:appD.allWords start:range.location finish:(range.location + range.length)];
 }
 
 

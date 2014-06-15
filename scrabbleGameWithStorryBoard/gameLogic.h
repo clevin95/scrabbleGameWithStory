@@ -19,7 +19,7 @@
 -(BOOL)isDictionaryWord:(NSString*)word;
 -(void)updateSore;
 -(NSString *)makeComputerMove;
-
+-(NSString *)makeLargestFormArray:(NSMutableArray *)lettersArray;
 -(NSString *)makeLargestFormLetters:(NSString *)letters;
 
 @end

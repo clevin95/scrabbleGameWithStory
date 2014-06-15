@@ -12,13 +12,15 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    NSString *filepath = [[NSBundle mainBundle] pathForResource:@"corncob_caps" ofType:@"txt"];
+    NSString *filepath = [[NSBundle mainBundle] pathForResource:@"80368-dictionary" ofType:@"txt"];
+    
+    
     NSData* data = [NSData dataWithContentsOfFile:filepath];
     NSString* string = [[NSString alloc] initWithBytes:[data bytes]
                                                 length:[data length]
                                               encoding:NSUTF8StringEncoding];
     
-    NSString* delimiter = @"\r\n";
+    NSString* delimiter = @"\n";
     self.allWords = [string componentsSeparatedByString:delimiter];
     return YES;
 }
