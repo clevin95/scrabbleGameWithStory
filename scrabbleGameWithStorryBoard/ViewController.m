@@ -33,6 +33,7 @@
 
 - (void)wipeResultWord{
     self.resultWord.text = @"";
+    [self.logic.selectedLetters removeAllObjects];
     self.indexesVisited = [@[] mutableCopy];
 }
 
@@ -52,14 +53,30 @@
     }
 }
 
+/*
+- (void)updateCellFonts
+{
+    for (NSIndexPath *indexPath in self.indexesVisited) {
+        UICollectionViewCell *cellToRegenerate = [self.gameBoardCV cellForItemAtIndexPath:indexPath];
+        if ([cellToRegenerate isKindOfClass:[ScrabbleSquareCollectionViewCell class]]){
+            ScrabbleSquareCollectionViewCell *scrabbleCellToGenerate = (ScrabbleSquareCollectionViewCell *)cellToRegenerate;
+            [self updateCell:scrabbleCellToGenerate];
+        }
+    }
+}
+
+*/
 
 - (void)addLetterFromIndex:(NSIndexPath *)indexPath
 {
     UICollectionViewCell *selectedCell = [self.gameBoardCV cellForItemAtIndexPath:indexPath];
     if ([selectedCell isKindOfClass:[ScrabbleSquareCollectionViewCell class]]){
         [self.indexesVisited addObject:indexPath];
+        
+        
         ScrabbleSquareCollectionViewCell *selectedScrabbleCell = (ScrabbleSquareCollectionViewCell *)selectedCell;
         NSString *selectedLetter = selectedScrabbleCell.letterLabel.text;
+        selectedScrabbleCell.letterLabel.textColor = [[UIColor alloc]initWithRed:20.0 green:0 blue:0 alpha:1];
         [self.logic.selectedLetters addObject:selectedLetter];
         [self updateResultWordWithLetter:selectedLetter];
     }
@@ -90,13 +107,15 @@
     self.playerScoreLabel.text = [NSString stringWithFormat:@"Your Score: %ld",(long)self.logic.score];
 }
 
+
 - (void)checkWordScore
 {
     if ([self.logic isDictionaryWord:self.resultWord.text]){
         self.resultWord.text = @"";
+        [self.logic updateSore];
+        NSLog(@"%@",[self.logic makeComputerMove]);
         [self regenerateSelected];
         [self wipeResultWord];
-        [self.logic updateSore];
     }
     [self updatePlayerScoreLabel];
 }
@@ -125,14 +144,13 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    //NSMutableArray *test = [[NSMutableArray alloc ]initWithArray:@[@"A",@"B",@"C",@"D",@"E",@"F",@"G",@"H",@"I",@"J",@"K",@"L",@"M",@"N",@"O",@"P"]];
-    //[self.logic largestRealWord:test withCount:0];
-	// Do any additional setup after loading the view, typically from a nib.
+    NSLog(@"%@",[self.logic makeLargestFormLetters:@"ABCDEFGHIJKLMNOPQRSTUVWXWZABCDEFGHIJKLMNOP"]);
 }
 
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
+    
     // Dispose of any resources that can be recreated.
     
 }

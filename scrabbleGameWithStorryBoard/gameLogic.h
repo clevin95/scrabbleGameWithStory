@@ -18,7 +18,8 @@
 -(NSString *)getRandomLetter;
 -(BOOL)isDictionaryWord:(NSString*)word;
 -(void)updateSore;
+-(NSString *)makeComputerMove;
 
--(NSMutableArray *)largestRealWord:(NSMutableArray *)lettersToAdd
-                   withCount:(NSInteger)count;
+-(NSString *)makeLargestFormLetters:(NSString *)letters;
+
 @end

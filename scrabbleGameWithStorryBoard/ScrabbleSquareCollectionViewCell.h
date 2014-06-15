@@ -11,5 +11,6 @@
 @interface ScrabbleSquareCollectionViewCell : UICollectionViewCell
 
 @property (weak, nonatomic) IBOutlet UILabel *letterLabel;
+@property (nonatomic) BOOL hasBeenTapped;
 
 @end

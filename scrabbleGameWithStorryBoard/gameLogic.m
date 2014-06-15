@@ -11,49 +11,202 @@
 
 @implementation gameLogic
 
+//Verry quick solution for generating all possible words for a given set of letters
+-(BOOL)binarySearchForItem:(NSString *)item
+                      From:(NSInteger)start
+                        To:(NSInteger)finish
+                   inArray:(NSMutableArray *)array
+{
+    
+    NSInteger middle = ((finish - start) / 2) + start;
+    NSString *middleItem = array[middle];
+    NSComparisonResult compare = [item compare:middleItem];
+    if (ABS(start - finish) < 2){
+        if ([item isEqualToString:array[start]]){
+            [array removeObjectAtIndex:start];
+            return YES;
+        }else if ([item isEqualToString:array[finish]]){
+            [array removeObjectAtIndex:finish];
+            return YES;
+        }
+        else{
+            return NO;
+        }
+    }
+    if (compare == NSOrderedSame){
+        [array removeObjectAtIndex:middle];
+        return YES;
+    }else if (compare == NSOrderedAscending){
+        return [self binarySearchForItem:item From:start To:middle inArray:array];
+    }else{
+        return [self binarySearchForItem:item From:middle To:finish inArray:array];
+    }
+}
+
+//This function uses binary search
+//returns a range where all the words beggining with the letters in item can be found
+//If no words begging with item are found it returns a range of (-1,-1)
+-(NSRange)searchForStartingSequence:(NSString *)item
+                       inDictionary:(NSArray *)array
+                              start:(NSInteger)start
+                             finish:(NSInteger)finish;
+{
+    NSInteger middle = ((finish - start) / 2) + start;
+    NSString *middleItem = array[middle];
+    if ([middleItem length] > [item length]){
+        middleItem = [middleItem substringToIndex:([item length])];
+    }
+    NSComparisonResult compare = [item compare:middleItem];
+    if (ABS(start - finish) < 2){
+        if ([item isEqualToString:array[start]] || [item isEqualToString:array[start]]){
+            return NSMakeRange(start, (finish - start));
+        }
+        else{
+            return NSMakeRange(-1, -1); //returns -1 -1 if starting sequence does not exist in dictionary
+        }
+    }
+    if (compare == NSOrderedSame){
+        return NSMakeRange(start, (finish - start));
+    }else if (compare == NSOrderedAscending){
+        return [self searchForStartingSequence:item inDictionary:array start:start finish:middle];
+    }else{
+        return [self searchForStartingSequence:item inDictionary:array start:middle finish:finish];
+    }
+}
+
+
+//Searches makes all permutaions from lettersToAdd
+//Adds each letter from letters to add as the next letter in newWord and runs recursively on each combination
+//remove the letter added to newWord from lettersToAdd for that path
+//Function also checks the dictionary for each newWord to see if there are any words that start with newWord
+//if not the recursive branch is pruned.
+//If a word is found startinf with newWord the range is updated to contain the range of words in the dictionary
+//containing all the words starting with newWord. This narrows down the section of the dictionary
+//needed to search to determine if the word is in the dictionary.
+
+-(NSString *)allPermutationsFromLetters:(NSMutableArray *)lettersToAdd
+                              toNewWord:(NSMutableArray *)newWord
+                         runningLongest:(NSString *)runningLongest
+                    withDictionaryRange:(NSRange)range
+                      englishDictionary:(NSMutableArray *)dictionary
+{
+    //NSLog(@"%d",[dictionary count]);
+    NSRange newRange = range;
+    if ([newWord count] > 0){
+        NSRange newRange = [self startingSequenceIsInDictionary:newWord forRange:range usingDictionary:dictionary];
+        if (newRange.length == -1){
+            return @""; // returns empty string if the no words begin with the letters in newWord
+        }else{
+            NSString *wordAsString = [self convertArrayToString:newWord];
+            if ([self binarySearchForItem:wordAsString From:newRange.location To:(newRange.location + newRange.length) inArray:dictionary]){
+                NSLog(@"%@",wordAsString);
+            }
+        }
+    }
+   
+    for (NSInteger i = 0; i < [lettersToAdd count]; i++){
+        NSMutableArray *lettersToAddCopy = [lettersToAdd mutableCopy];
+        NSMutableArray *newWordCopy = [newWord mutableCopy];
+        
+        NSString *letterToTransfer = lettersToAdd[i];
+        [lettersToAdd removeObjectAtIndex:i];
+        [newWord addObject:letterToTransfer];
+        [self allPermutationsFromLetters:lettersToAdd toNewWord:newWord runningLongest:runningLongest withDictionaryRange:newRange englishDictionary:dictionary];
+        newWord = newWordCopy;
+        lettersToAdd = lettersToAddCopy;
+    }
+    return runningLongest;
+}
+
+
+
+-(NSString *)makeLargestFormLetters:(NSString *)letters{
+    NSMutableArray *lettersArray = [self convertWordToLetterArray:letters];
+    AppDelegate *appD = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+    NSRange fullRange = NSMakeRange(0, ([appD.allWords count] - 1));
+    NSString *runningLongest = @"";
+    [self allPermutationsFromLetters:lettersArray toNewWord:[@[] mutableCopy] runningLongest:runningLongest withDictionaryRange:fullRange englishDictionary:appD.allWords];
+    return runningLongest;
+}
+
+
+-(NSRange)startingSequenceIsInDictionary:(NSArray *)startingSequence
+                                forRange:(NSRange)range
+                         usingDictionary:(NSMutableArray *)dictionary
+{
+    NSString *startingSequenceString = [self convertArrayToString:startingSequence];
+    return [self searchForStartingSequence:startingSequenceString inDictionary:dictionary start:range.location finish:(range.location + range.length)];
+}
+
+-(BOOL)wordIsInDictionary:(NSArray *)startingSequence
+                    forRange:(NSRange)range
+{
+    AppDelegate *appD = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+    NSString *word = [self convertArrayToString:startingSequence];
+    return [self binarySearchForItem:word From:range.location To:(range.location + range.length) inArray:appD.allWords];
+}
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-(NSMutableArray *)convertWordToLetterArray:(NSString *)word
+{
+    NSMutableArray *allLetters = [[NSMutableArray alloc]init];
+    for (NSInteger i = 0; i < [word length]; i++){
+        [allLetters addObject:[NSString stringWithFormat:@"%c",[word characterAtIndex:i]]];
+    }
+    return allLetters;
+}
+
+
+
+
+
+-(NSString *)makeComputerMove
+{
+    for (NSInteger rangeLength = [self.lettersInPlay count] - 1; rangeLength > 0; rangeLength--){
+        NSRange searchSection = NSMakeRange(0, rangeLength);
+        NSMutableArray *wordFromArray = [[self.lettersInPlay subarrayWithRange:searchSection] mutableCopy];
+        /*  NSString *word = [self makeLargestFormLetters:(NSString *)];
+         if (word){
+         return word;
+         }*/
+    }
+    return nil;
+}
+
 -(NSString *)convertArrayToString:(NSArray *)letterArray
 {
     NSMutableString *outputString = [[NSMutableString alloc]initWithString:@""];
     for (NSString *letter in letterArray){
         [outputString appendString:letter];
     }
-    return [outputString lowercaseString];
+    return outputString;
 }
-
-
--(NSMutableArray *)largestRealWord:(NSMutableArray *)lettersToAdd
-                         withCount:(NSInteger)count
-{
-    NSMutableArray *allSwapsForCount = [self allEllemensIn:lettersToAdd moveToIndex:count];
-    if (count == [lettersToAdd count] + 1){
-        if ([self isDictionaryWord:[self convertArrayToString:lettersToAdd]]){
-            return lettersToAdd;
-        }else{
-            return nil;
-        }
-    }
-    for (NSMutableArray *newSwap in allSwapsForCount){
-        [self largestRealWord:newSwap withCount:count + 1];
-    }
-    return allSwapsForCount;
-}
-
--(NSMutableArray *)allEllemensIn:(NSMutableArray *)letterArray
-                     moveToIndex:(NSInteger)index
-{
-    NSMutableArray *outputArray = [[NSMutableArray alloc]init];
-    for (NSInteger i = index + 1; i < [letterArray count]; i++){
-        NSMutableArray *newCombination = [letterArray mutableCopy];
-        [newCombination exchangeObjectAtIndex:index withObjectAtIndex:i];
-        [outputArray addObject:newCombination];
-    }
-    [outputArray addObject:letterArray];
-    return outputArray;
-}
-
-
-
-
 
 -(NSMutableArray *)selectedLetters
 {
@@ -103,8 +256,8 @@
     NSDictionary *letterScores = [gameLogic scrabbleLetterScore];
     for (NSString *letter in self.selectedLetters){
         score += [letterScores[letter] integerValue];
-        
     }
+    [self.selectedLetters removeAllObjects];
     return score;
 }
 
@@ -113,30 +266,10 @@
 }
 
 
--(BOOL)binarySearchForItem:(NSString *)item
-                      From:(NSInteger)start
-                        To:(NSInteger)finish
-                   inArray:(NSArray *)array
-{
-    if (start == finish){
-        return NO;
-    }
-    NSInteger middle = ((start - finish) / 2) + start;
-    NSString *middleItem = array[middle];
-    NSComparisonResult compare = [item compare:middleItem];
-    if (compare == NSOrderedSame){
-        return YES;
-    }else if (compare < NSOrderedAscending){
-        return [self binarySearchForItem:item From:start To:middle inArray:array];
-    }else{
-        return [self binarySearchForItem:item From:middle To:finish inArray:array];
-    }
-}
+
 
 -(BOOL)isDictionaryWord:(NSString*) word {
     AppDelegate *appD = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+    return [self binarySearchForItem:word From:0 To:[appD.allWords count] inArray:appD.allWords];
 }
-
-
-
 @end

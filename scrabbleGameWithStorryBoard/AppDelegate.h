@@ -11,6 +11,6 @@
 @interface AppDelegate : UIResponder <UIApplicationDelegate>
 
 @property (strong, nonatomic) UIWindow *window;
-@property (strong, nonatomic) NSArray *allWords;
+@property (strong, nonatomic) NSMutableArray *allWords;
 
 @end

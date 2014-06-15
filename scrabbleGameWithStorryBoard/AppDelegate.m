@@ -18,8 +18,9 @@
                                                 length:[data length]
                                               encoding:NSUTF8StringEncoding];
     
-    NSString* delimiter = @"\n";
-    self.allWords = [string componentsSeparatedByString:delimiter];
+    NSString* delimiter = @"\r\n";
+    self.allWords = [[NSMutableArray alloc]initWithCapacity:58110];
+    self.allWords = [[string componentsSeparatedByString:delimiter] mutableCopy];
     return YES;
 }
 							
