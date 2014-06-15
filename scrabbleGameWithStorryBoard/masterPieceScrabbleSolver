@@ -15,23 +15,27 @@
 -(BOOL)binarySearchForItem:(NSString *)item
                       From:(NSInteger)start
                         To:(NSInteger)finish
-                   inArray:(NSArray *)array
+                   inArray:(NSMutableArray *)array
 {
     
     NSInteger middle = ((finish - start) / 2) + start;
     NSString *middleItem = array[middle];
-    NSComparisonResult compare = [item compare:middleItem];
+    NSString *middleItemWithoutStar = [middleItem stringByReplacingOccurrencesOfString:@"*" withString:@""];
+    NSComparisonResult compare = [item compare:middleItemWithoutStar];
     if (ABS(start - finish) < 2){
         if ([item isEqualToString:array[start]]){
+            array[start] = [@"*" stringByAppendingString:array[start]];
             return YES;
         }else if ([item isEqualToString:array[finish]]){
+            array[finish] = [@"*" stringByAppendingString:array[finish]];
             return YES;
         }
         else{
             return NO;
         }
     }
-    if (compare == NSOrderedSame){
+    if ([item isEqualToString:middleItem]){
+        array[middle] = [@"*" stringByAppendingString:array[start]];
         return YES;
     }else if (compare == NSOrderedAscending){
         return [self binarySearchForItem:item From:start To:middle inArray:array];
@@ -44,16 +48,17 @@
 //returns a range where all the words beggining with the letters in item can be found
 //If no words begging with item are found it returns a range of (-1,-1)
 -(NSRange)searchForStartingSequence:(NSString *)item
-                       inDictionary:(NSArray *)array
+                       inDictionary:(NSMutableArray *)array
                               start:(NSInteger)start
                              finish:(NSInteger)finish;
 {
     NSInteger middle = ((finish - start) / 2) + start;
     NSString *middleItem = array[middle];
-    if ([middleItem length] > [item length]){
-        middleItem = [middleItem substringToIndex:([item length])];
+    NSString *middleItemWithoutStar = [middleItem stringByReplacingOccurrencesOfString:@"*" withString:@""];
+    if ([middleItemWithoutStar length] > [item length]){
+        middleItemWithoutStar = [middleItemWithoutStar substringToIndex:([item length])];
     }
-    NSComparisonResult compare = [item compare:middleItem];
+    NSComparisonResult compare = [item compare:middleItemWithoutStar];
     if (ABS(start - finish) < 2){
         if ([item isEqualToString:array[start]] || [item isEqualToString:array[start]]){
             return NSMakeRange(start, (finish - start));
@@ -85,9 +90,10 @@
                               toNewWord:(NSMutableArray *)newWord
                          runningLongest:(NSString *)runningLongest
                     withDictionaryRange:(NSRange)range
-                      englishDictionary:(NSArray *)dictionary
+                      englishDictionary:(NSMutableArray *)dictionary
 {
-
+    //NSLog(@"%d",[dictionary count]);
+    //NSLog(@"newWord:%@",newWord);
     NSRange newRange = range;
     if ([newWord count] > 0){
         NSRange newRange = [self startingSequenceIsInDictionary:newWord forRange:range usingDictionary:dictionary];
@@ -96,16 +102,21 @@
         }else{
             NSString *wordAsString = [self convertArrayToString:newWord];
             if ([self binarySearchForItem:wordAsString From:newRange.location To:(newRange.location + newRange.length) inArray:dictionary]){
-               // NSLog(@"%@",wordAsString);
+                
+                NSLog(@"%@",wordAsString);
+                if ([wordAsString isEqualToString:@"ALTO"]){
+                    
+                }
             }
         }
     }
-    NSArray *distinctLetters = [self allDistinctFrom:lettersToAdd];
-    for (NSInteger i = 0; i < [distinctLetters count]; i++){
+   
+    for (NSInteger i = 0; i < [lettersToAdd count]; i++){
         NSMutableArray *lettersToAddCopy = [lettersToAdd mutableCopy];
         NSMutableArray *newWordCopy = [newWord mutableCopy];
-        NSString *letterToTransfer = distinctLetters[i];
-        [lettersToAdd removeObjectAtIndex:[lettersToAdd indexOfObject:letterToTransfer]];
+        
+        NSString *letterToTransfer = lettersToAdd[i];
+        [lettersToAdd removeObjectAtIndex:i];
         [newWord addObject:letterToTransfer];
         [self allPermutationsFromLetters:lettersToAdd toNewWord:newWord runningLongest:runningLongest withDictionaryRange:newRange englishDictionary:dictionary];
         newWord = newWordCopy;
@@ -128,23 +139,17 @@
 
 -(NSRange)startingSequenceIsInDictionary:(NSArray *)startingSequence
                                 forRange:(NSRange)range
-                         usingDictionary:(NSArray *)dictionary
+                         usingDictionary:(NSMutableArray *)dictionary
 {
     NSString *startingSequenceString = [self convertArrayToString:startingSequence];
     return [self searchForStartingSequence:startingSequenceString inDictionary:dictionary start:range.location finish:(range.location + range.length)];
 }
 
 
--(NSArray *)allDistinctFrom:(NSMutableArray *)array
-{
-    NSMutableArray *distinctArray = [[NSMutableArray alloc]init];
-    for (NSString *item in array){
-        if (![distinctArray containsObject:item]){
-            [distinctArray addObject:item];
-        }
-    }
-    return distinctArray;
-}
+
+
+
+
 
 
 
