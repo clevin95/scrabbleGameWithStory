@@ -17,7 +17,6 @@
                         To:(NSInteger)finish
                    inArray:(NSArray *)array
 {
-    
     NSInteger middle = ((finish - start) / 2) + start;
     NSString *middleItem = array[middle];
     NSComparisonResult compare = [item compare:middleItem];
@@ -96,7 +95,7 @@
         }else{
             NSString *wordAsString = [self convertArrayToString:newWord];
             if ([self binarySearchForItem:wordAsString From:newRange.location To:(newRange.location + newRange.length) inArray:dictionary]){
-            //    NSLog(@"%@",wordAsString);
+                NSLog(@"%@",wordAsString);
             }
         }
     }

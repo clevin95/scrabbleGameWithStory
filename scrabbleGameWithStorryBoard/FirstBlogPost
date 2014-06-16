@@ -97,18 +97,36 @@ THE VERY LONG BUT VERY FAST SOLUTION:
 After attemting to make my first algorith more efficient I realised that there was probably no significantly faster way to create all permutations for a given set of letters. However I also realised that I was not trying to create all permutations, I was trying to create all permutations that were dictionary words. This important distinctin lead me to the conclusion that instead of having the dictionary look up proccess and the permutation generation algorthm work independnt of each other I should have each prosses inform the other. I eventually deveoped the algorithm to use 
 
 
+The great thing about this aproach is that it is nearly impossible to get a stack overflow no matter how many letters you input. I've tested it on every letter in the alphabet times 65 (that's 16,900 letters). It takes a little while to run (about 8.5 minutes) simply because it has to run through and generate all of the 80368 words in the dictionary that I am using. This means that it is generating and checking 157 dictionary words per second (80,368words/510s = 157.56words/s). Also, because the recursive branches are pruned as soon as their are no ditionary words starting with the generate letter combination the recursion does not go too deep. For the example of every letter in the alphabet times 65 the the live memory consumption reached a peak of 500mb. 
+
+ seeing as it only recurses to a depth where a dictionary word can still be formed. This meens that the run time of the algorith grows liniarly with the number of words that can be found as aposed to an exponential relationship with the number of letters input. Becasue of the way dictionary searches build on each other their is also 
+
+
 This lead me to the key realisation that I needed to synchronise the prosses of creating all permutations with the dictionary look up process. 
 
 //Verry quick solution for generating all possible words for a given set of letters
 
 //used binary search to determine weather item is in array
 //Verry quick solution for generating all possible words for a given set of letters
+//
+//  gameLogic.m
+//  scrabbleGameWithStorryBoard
+//
+//  Created by swift on 6/12/14.
+//  Copyright (c) 2014 swift. All rights reserved.
+//
+
+#import "gameLogic.h"
+#import "AppDelegate.h"
+
+@implementation gameLogic
+
+//Verry quick solution for generating all possible words for a given set of letters
 -(BOOL)binarySearchForItem:(NSString *)item
                       From:(NSInteger)start
                         To:(NSInteger)finish
                    inArray:(NSArray *)array
 {
-    
     NSInteger middle = ((finish - start) / 2) + start;
     NSString *middleItem = array[middle];
     NSComparisonResult compare = [item compare:middleItem];
@@ -187,7 +205,7 @@ This lead me to the key realisation that I needed to synchronise the prosses of 
         }else{
             NSString *wordAsString = [self convertArrayToString:newWord];
             if ([self binarySearchForItem:wordAsString From:newRange.location To:(newRange.location + newRange.length) inArray:dictionary]){
-               //NSLog(@"%@",wordAsString);
+                NSLog(@"%@",wordAsString);
             }
         }
     }
@@ -234,6 +252,16 @@ This lead me to the key realisation that I needed to synchronise the prosses of 
     [self allPermutationsFromLetters:lettersArray toNewWord:[@[] mutableCopy] runningLongest:runningLongest withDictionaryRange:fullRange englishDictionary:appD.allWords];
     return runningLongest;
 }
+
+
+-(NSString *)makeLargestFormArray:(NSMutableArray *)lettersArray{
+    AppDelegate *appD = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+    NSRange fullRange = NSMakeRange(0, ([appD.allWords count] - 1));
+    NSString *runningLongest = @"";
+    [self allPermutationsFromLetters:lettersArray toNewWord:[@[] mutableCopy] runningLongest:runningLongest withDictionaryRange:fullRange englishDictionary:appD.allWords];
+    return runningLongest;
+}
+
 
 
 

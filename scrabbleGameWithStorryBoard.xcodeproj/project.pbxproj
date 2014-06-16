@@ -65,6 +65,7 @@
 		43E05DDF194A29AC006CC8F9 /* ScrabbleSquareCollectionViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScrabbleSquareCollectionViewCell.m; sourceTree = "<group>"; };
 		43E05DE1194A2C4C006CC8F9 /* gameLogic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gameLogic.h; sourceTree = "<group>"; };
 		43E05DE2194A2C4C006CC8F9 /* gameLogic.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = gameLogic.m; sourceTree = "<group>"; };
+		43F6B2F1194E59FB007BEEE5 /* algorithm */ = {isa = PBXFileReference; lastKnownFileType = text; name = algorithm; path = ../../scrabbleAlgorithm/algorithm; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -132,6 +133,7 @@
 				43E05DDF194A29AC006CC8F9 /* ScrabbleSquareCollectionViewCell.m */,
 				43E05DE1194A2C4C006CC8F9 /* gameLogic.h */,
 				43E05DE2194A2C4C006CC8F9 /* gameLogic.m */,
+				43F6B2F1194E59FB007BEEE5 /* algorithm */,
 				43E05DBE194A2676006CC8F9 /* Images.xcassets */,
 				43E05DAA194A2676006CC8F9 /* Supporting Files */,
 			);
